@@ -45,6 +45,7 @@ baseline.data.frame <- function(x, variables, reference, method = mean, by_group
     if (!all(variables %in% names(x))) stop('invalid variables selected')
     if (!all(vapply(x[variables], is.numeric, logical(1)))) stop('non-numeric variables selected')
   }
+  if (missing(reference)) stop('"reference" is missing with no default')
   if (!missing(by_group) && !all(by_group %in% names(x))) stop('invalid grouping selected: "by_group"')
 
   # capture logical predicate for subset and, if string, convert to expression
@@ -60,6 +61,10 @@ baseline.data.frame <- function(x, variables, reference, method = mean, by_group
     if (missing(reference)) x else
       subset(x, subset = eval(r))
   if (nrow(x_ref) == 0) stop('reference set is empty; reconsider grouping and reference specification')
+  # if (nrow(x_ref) == 0) {
+  #   warning('reference set is empty; using all observations for baseline calculation')
+  #   x_ref <- x
+  # }
   # separate variables to be normalized from remaining ones
   x_vars <- x[variables]
   x_rems <- x[setdiff(names(x), variables)]
